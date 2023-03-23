@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <stdexcept>
 
 namespace corgi::binary
 {
@@ -20,9 +21,14 @@ int bit(int pos, unsigned char* src, int size)
 
 long long bits_to_llong(int pos, int count, unsigned char* src, int size)
 {
-    assert(count < 64);
-    assert(pos >= 0 && pos < size * 8);
-    assert(pos + count >= 0 && pos + count < size * 8);
+    if(count >= 64)
+        throw std::invalid_argument("size is >= 64 ");
+
+    if(pos < 0 || pos >= size * 8)
+        throw std::invalid_argument("pos is out of bounds ");
+
+    if(pos + count < 0 || pos + count > size * 8)
+        throw std::invalid_argument("pos is out of bounds ");
 
     // Stores the final result
     long long result = 0;
