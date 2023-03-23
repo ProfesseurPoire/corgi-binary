@@ -28,7 +28,5 @@ int main()
             assert_that(result, corgi::test::equals(static_cast<long long>(r)));
         });
 
-    corgi::test::run_all();
-
-    return 0;
+    return corgi::test::run_all();
 }
