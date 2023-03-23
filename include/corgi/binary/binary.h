@@ -17,7 +17,7 @@ int bit(int pos, unsigned char* src, int size);
 
 /**
  * @brief   Converts @p count bits located at @pos into long long from
- *          the object pointer by @p src of @p size bytes
+ *          the object pointed by @p src of @p size bytes
  *
  *          @param pos : position of the bits we're looking for
  *          @param count : How many bits we're reading.
