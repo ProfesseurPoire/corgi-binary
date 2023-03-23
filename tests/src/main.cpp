@@ -1,32 +1,36 @@
 #include "corgi/binary/binary.h"
 #include "corgi/test/test.h"
+
+using namespace corgi;
+
 int main()
 {
-    corgi::test::add_test(
+    test::add_test(
         "corgi-binary", "bit",
         []() -> void
         {
-            int v = 0b11111111111110111001111101111101;
+            int test_data = 0b11111111111110111001111101111101;
             assert_that(
-                corgi::binary::bit(0, reinterpret_cast<unsigned char*>(&v), 4),
-                corgi::test::equals(1));
+                binary::bit(0, reinterpret_cast<unsigned char*>(&test_data), 4),
+                test::equals(1));
             assert_that(
-                corgi::binary::bit(1, reinterpret_cast<unsigned char*>(&v), 4),
-                corgi::test::equals(0));
+                binary::bit(1, reinterpret_cast<unsigned char*>(&test_data), 4),
+                test::equals(0));
         });
 
-    corgi::test::add_test(
+    test::add_test(
         "corgi-binary", "bits_llong",
         []() -> void
         {
-            int r = 0b00000000000000111011100111110111;
-            int v = 0b11111111111110111001111101111101;
+            int test_data       = 0b11111111111110111001111101111101;
+            int expected_result = 0b00000000000000111011100111110111;
 
-            auto result = corgi::binary::bits_to_llong(
-                4, 18, reinterpret_cast<unsigned char*>(&v), 4);
+            auto result = binary::bits_to_llong(
+                4, 18, reinterpret_cast<unsigned char*>(&test_data), 4);
 
-            assert_that(result, corgi::test::equals(static_cast<long long>(r)));
+            assert_that(result,
+                        test::equals(static_cast<long long>(expected_result)));
         });
 
-    return corgi::test::run_all();
+    return test::run_all();
 }
