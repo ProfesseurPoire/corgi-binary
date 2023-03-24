@@ -4,8 +4,9 @@
 
 namespace
 {
-constexpr int bits_per_byte = 8;
-}
+constexpr int           bits_per_byte = 8;
+constexpr unsigned char byte_all_set  = 0b11111111;
+}    // namespace
 
 namespace corgi::binary
 {
@@ -26,6 +27,17 @@ static int compute_byte_count_from_bit_count(int bit_count)
         byte_count++;
 
     return byte_count;
+}
+
+bool dynamic_bitset::in_range(int bit_index) const
+{
+    return (bit_index >= 0 && bit_index < bit_size_);
+}
+
+void dynamic_bitset::set(bool value)
+{
+    for(auto& byte : bytes_)
+        value ? byte = byte_all_set : byte = 0;
 }
 
 void dynamic_bitset::set(int pos, bool value)
