@@ -33,10 +33,21 @@ void dynamic_bitset::set(int pos, bool value)
     auto byte_index = pos / bits_per_byte;
     auto bit_index  = pos % bits_per_byte;
 
-    unsigned char mask = 0;
-    mask               = bit_index << 1;
+    // Clears the bit we want to set
+    // (bytes_[byte_index] & ~(1UL << bit_index))
+    //
+    // Sets the bits with the given value
+    // (value << bit_index)
+    bytes_[byte_index] =
+        (bytes_[byte_index] & ~(1UL << bit_index)) | (value << bit_index);
 
-    unsigned char cpy = bytes_[byte_index];
+    // This was my implementation,
+    // unsigned char mask = 0;
+    // mask               = static_cast<unsigned char>(1 << bit_index);
+    // if(value)
+    //     bytes_[byte_index] |= mask;
+    // else
+    //     bytes_[byte_index] &= ~mask;
 }
 
 unsigned long long dynamic_bitset::to_ullong() const

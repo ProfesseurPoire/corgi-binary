@@ -34,13 +34,40 @@ public:
 
     /**
      * @brief   Returns the bit value located at @p pos
+     *
+     * @param pos Position of the bit to test
+     *
+     * @retval true  : Bit is set
+     * @retval false : Bit isn't set
      */
     bool test(int pos) const;
 
     /**
      * @brief   Sets the bit located at @p pos to @p value
+     *
+     * @param pos   Position of the bit to set
+     * @param value The value to set the bit to
      */
     void set(int pos, bool value);
+
+    /**
+     * @brief   Flips the bit located at @p pos
+     *
+     * @param pos Position of the bit flipped
+     */
+    void flip(int pos);
+
+    /**
+     * @brief   Sets the bit located at @p pos to false
+     *
+     * @param pos Position of the bit set to false
+     */
+    void reset(int pos);
+
+    /**
+     * @brief   Sets all the bits to false
+     */
+    void reset();
 
     /**
      * @brief   Converts the bits to a ullong value.
