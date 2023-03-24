@@ -1,4 +1,5 @@
 #include "corgi/binary/binary.h"
+#include "corgi/binary/dynamic_bitset.h"
 #include "corgi/test/test.h"
 
 using namespace corgi;
@@ -31,6 +32,34 @@ int main()
             assert_that(result,
                         test::equals(static_cast<long long>(expected_result)));
         });
+
+    test::add_test("dynamic_bitset", "construction",
+                   []() -> void
+                   {
+                       corgi::binary::dynamic_bitset bs(10);
+                       assert_that(bs.size(), corgi::test::equals(10));
+
+                       assert_that(bs.test(0), corgi::test::equals(false));
+                   });
+
+    test::add_test("dynamic_bitset", "construction_with_default",
+                   []() -> void
+                   {
+                       binary::dynamic_bitset bs(10, 1);
+                       assert_that(bs.size(), corgi::test::equals(10));
+                       assert_that(bs.test(1), corgi::test::equals(true));
+                   });
+
+    test::add_test("dynamic_bitset", "set_bit",
+
+                   []() -> void
+                   {
+                       binary::dynamic_bitset bs(10);
+                       bs.set(4, 1);
+
+                       assert_that(bs.test(4), corgi::test::equals(true));
+                       assert_that(bs.to_llong(), corgi::test::equals(16));
+                   });
 
     return test::run_all();
 }
