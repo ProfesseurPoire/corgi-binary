@@ -25,7 +25,7 @@ public:
      * @brief   Constructs a new dynamic bitset that contains @p count bits sets
      *          to @p value
      */
-    dynamic_bitset(int n, bool value);
+    dynamic_bitset(int count, bool value);
 
     /**
      * @brief   Returns how many bits are stored
@@ -42,15 +42,29 @@ public:
      */
     void set(int pos, bool value);
 
-private:
-    void find_dimensions(int count);
+    /**
+     * @brief   Converts the bits to a ullong value.
+     *
+     *          This function will throw a std::overflow_error if the value
+     *          cannot be converted to a unsigned long long. IE, it has more
+     *          than 64 bits.
+     */
+    unsigned long long to_ullong() const;
 
+private:
     /**
      * @brief   Bits are stored here
      */
     std::vector<unsigned char> bytes_;
 
-    int size_;
+    /**
+     * @brief How many bits are stored by the bitset
+     */
+    int bit_size_;
+
+    /**
+     * @brief How many bytes are used to store the @a bit_size_ bits
+     */
     int byte_size_;
 };
 }    // namespace corgi::binary

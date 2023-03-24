@@ -58,7 +58,7 @@ int main()
                        bs.set(4, 1);
 
                        assert_that(bs.test(4), corgi::test::equals(true));
-                       assert_that(bs.to_llong(), corgi::test::equals(16));
+                       assert_that(bs.to_ullong(), corgi::test::equals(16));
                    });
 
     return test::run_all();

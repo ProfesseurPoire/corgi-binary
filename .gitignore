@@ -13,6 +13,7 @@ CMakeLists.txt.user
 
 .cache/
 .vs/
+doxygen/
 conan/
 t/
 sln/
