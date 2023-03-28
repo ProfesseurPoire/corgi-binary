@@ -19,6 +19,20 @@ int main()
                         std::length_error);
         });
 
+    test::add_test("dynamic_bitset", "at",
+                   []() -> void
+                   {
+                       corgi::binary::dynamic_bitset bs;
+                       try
+                       {
+                           // bs.at(1);
+                       }
+                       catch(std::exception& e)
+                       {
+                           std::cout << e.what() << std::endl;
+                       }
+                   });
+
     test::add_test("dynamic_bitset", "allocate_max",
                    []() -> void
                    {

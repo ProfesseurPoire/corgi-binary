@@ -1,6 +1,7 @@
 #include <corgi/binary/dynamic_bitset.h>
 
 #include <cstring>
+#include <format>
 #include <stdexcept>
 namespace
 {
@@ -27,6 +28,11 @@ static std::size_t compute_byte_count_from_bit_count(std::size_t bit_count)
         byte_count++;
 
     return byte_count;
+}
+
+bool dynamic_bitset::operator[](std::size_t pos) const
+{
+    return test(pos);
 }
 
 bool dynamic_bitset::any() const noexcept
@@ -112,7 +118,7 @@ void dynamic_bitset::push_back(bool value)
 
 bool dynamic_bitset::in_range(std::size_t bit_index) const
 {
-    return (bit_index >= 0 && bit_index < bit_size_);
+    return (bit_index < bit_size_);
 }
 
 void dynamic_bitset::set(bool value)
@@ -194,8 +200,11 @@ std::size_t dynamic_bitset::size() const noexcept
 
 bool dynamic_bitset::test(std::size_t pos) const
 {
-    if(pos < 0 || pos >= bit_size_)
-        throw std::invalid_argument("pos argument is out of bound");
+    if(!in_range(pos))
+        throw std::out_of_range(
+            std::format("dynamic_bitset::at : Argument pos is equal to {} and "
+                        "is out of range [{},{}]",
+                        pos, 0, bit_size_));
 
     return static_cast<bool>(
         bytes_[pos / bits_per_byte] >> (pos % bits_per_byte) & 1);

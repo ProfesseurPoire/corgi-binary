@@ -58,6 +58,15 @@ public:
     dynamic_bitset slice(std::size_t begin, std::size_t len);
 
     /**
+     * @brief   Returns a copy of the bit value located at @p pos
+     *
+     * @param pos Locationg of the bit we want to access
+     * @retval  True if the bit located at @p pos is set
+     * @retval  False if the bit located at @p pos isn't set
+     */
+    bool operator[](std::size_t pos) const;
+
+    /**
      * @brief   Adds a bit to the set
      * @param value The value of the new bit added to the set
      */
@@ -119,12 +128,18 @@ public:
     unsigned char* data();
 
     /**
-     * @brief   Returns the bit's value located at @p pos
+     * @brief   Returns a copy of the bit value located at @p pos with bound
+     * checking
      *
-     * @param pos The position of the bit to test
+     * The difference with the subscript [] operator is that this function bound
+     * checks @p pos and throws an exception if pos is out of range
      *
-     * @retval true  : Bit located at @p pos is set
-     * @retval false : Bit located at @p pos isn't set
+     * @param pos Locationg of the bit we want to access
+     * @retval  True if the bit located at @p pos is set
+     * @retval  False if the bit located at @p pos isn't set
+     *
+     * @throws std::out_of_range Thrown if @p index isn't in the [0,size_bit]
+     * range
      */
     bool test(std::size_t pos) const;
 
