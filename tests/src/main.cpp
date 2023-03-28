@@ -9,14 +9,15 @@ int main()
     // NOTE : This test probably fails on 32 bits because I suspect this
     // will return the max value of uint and the +1 will just loop back to 0
     // Maybe it'd be nice to run the code on both 32 and 64 bit environment
-    test::add_test("dynamic_bitset", "allocate_more_than_max",
-                   []() -> void
-                   {
-                       check_throw(
-                           corgi::binary::dynamic_bitset(
-                               corgi::binary::dynamic_bitset::max_size() + 1),
-                           std::length_error);
-                   });
+    test::add_test(
+        "dynamic_bitset", "allocate_more_than_max",
+        []() -> void
+        {
+            std::cout << corgi::binary::dynamic_bitset::max_size() << std::endl;
+            check_throw(corgi::binary::dynamic_bitset(
+                            corgi::binary::dynamic_bitset::max_size() + 1),
+                        std::length_error);
+        });
 
     test::add_test("dynamic_bitset", "allocate_max",
                    []() -> void
