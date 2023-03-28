@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <limits>
 #include <vector>
 
@@ -16,16 +17,21 @@ namespace corgi::binary
 class dynamic_bitset
 {
 public:
-    using size_t = long long;
-
     /**
      * @brief   Maximum number of bits the element can hold.
      */
-    static inline constexpr size_t max_size() noexcept
+    static constexpr inline std::size_t max_size() noexcept
     {
         std::vector<unsigned char> c;
         return c.max_size();
     }
+
+    /**
+     * @brief Erases every bit from the container
+     *
+     * Warning, this doesn't resize the container
+     */
+    void clear();
 
     /**
      * @brief   Constructs a new dynamic bitset with @p count bits sets
@@ -36,7 +42,7 @@ public:
      *
      * @throws std::invalid_argument if count is less than 0
      */
-    dynamic_bitset(size_t count = 0, bool value = false);
+    explicit dynamic_bitset(std::size_t count = 0, bool value = false);
 
     /**
      * @brief   Constructs and returns a new dynamic_bitset that is a subset of
@@ -49,8 +55,7 @@ public:
      * @throws std::invalid_argument Thrown if @p len is greater than begin +
      * bit_size_
      */
-    dynamic_bitset slice(dynamic_bitset::size_t begin,
-                         dynamic_bitset::size_t len);
+    dynamic_bitset slice(std::size_t begin, std::size_t len);
 
     /**
      * @brief   Adds a bit to the set
@@ -99,13 +104,13 @@ public:
      * @brief   Returns the number of bits in the container.
      * @return  The number of bit in the container.
      */
-    dynamic_bitset::size_t size() const noexcept;
+    std::size_t size() const noexcept;
 
     /**
      * @brief   Returns the number of bytes used by the container.
      * @return  The number of byte used by the container.
      */
-    dynamic_bitset::size_t byte_size() const noexcept;
+    std::size_t byte_size() const noexcept;
 
     /**
      * @brief   Returns a pointer to the array storing the packed bits.
@@ -121,7 +126,7 @@ public:
      * @retval true  : Bit located at @p pos is set
      * @retval false : Bit located at @p pos isn't set
      */
-    bool test(dynamic_bitset::size_t pos) const;
+    bool test(std::size_t pos) const;
 
     /**
      * @brief   Sets the bit located at @p pos to @p value
@@ -129,7 +134,7 @@ public:
      * @param pos   The position of the bit to set
      * @param value The value to set the bit to
      */
-    void set(dynamic_bitset::size_t pos, bool value = true);
+    void set(std::size_t pos, bool value = true);
 
     /**
      * @brief   Sets all bits to @p value
@@ -144,7 +149,7 @@ public:
      *
      * @param pos The position of the bit to flip
      */
-    void flip(dynamic_bitset::size_t pos);
+    void flip(std::size_t pos);
 
     /**
      * @brief Flips every bits
@@ -156,7 +161,7 @@ public:
      *
      * @param pos The position of the bit to set to false
      */
-    void reset(dynamic_bitset::size_t pos);
+    void reset(std::size_t pos);
 
     /**
      * @brief   Sets all the bits to false
@@ -183,7 +188,7 @@ private:
      * @retval true     bit_index is in range
      * @retval false    bit_index isn't in range
      */
-    bool in_range(dynamic_bitset::size_t bit_index) const;
+    bool in_range(std::size_t bit_index) const;
 
     /**
      * @brief   Bits are stored here
@@ -193,6 +198,6 @@ private:
     /**
      * @brief How many bits are stored by the bitset
      */
-    size_t bit_size_;
+    std::size_t bit_size_;
 };
 }    // namespace corgi::binary

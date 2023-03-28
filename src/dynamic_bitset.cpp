@@ -15,10 +15,9 @@ namespace corgi::binary
  *
  * @relates dynamic_set
  */
-static dynamic_bitset::size_t
-compute_byte_count_from_bit_count(dynamic_bitset::size_t bit_count)
+static std::size_t compute_byte_count_from_bit_count(std::size_t bit_count)
 {
-    dynamic_bitset::size_t byte_count = 0;
+    std::size_t byte_count = 0;
 
     auto mod   = bit_count % bits_per_byte;
     byte_count = bit_count / bits_per_byte;
@@ -34,32 +33,29 @@ bool dynamic_bitset::any() const noexcept
     if(empty())
         return false;
 
-    for(const auto& byte : bytes_)
+    std::size_t bits   = bit_size_;
+    std::size_t offset = 0;
+
+    // We read bits 8 by 8 as much as we can
+    while(bits > 0)
     {
-        if(byte != 0)
+        // How many bits we read
+        auto size = std::min(static_cast<std::size_t>(8), bits);
+
+        // Sets size bits to 1
+        unsigned char val = (1 << size) - 1;
+
+        // We get back the byte index
+        auto byte_index = offset / 8;
+
+        // We compare check if at least one bit is set
+        if((bytes_[byte_index] & val) != 0)
             return true;
+
+        offset += size;
+        bits -= size;
     }
     return false;
-}
-
-bool dynamic_bitset::none() const noexcept
-{
-    return !any();
-}
-
-bool dynamic_bitset::empty() const noexcept
-{
-    return bit_size_ == 0;
-}
-
-void dynamic_bitset::push_back(bool value)
-{
-    // We check if we need a new byte
-    if((bit_size_ + 1) % 8 == 1)
-        bytes_.push_back(0);
-
-    bit_size_++;
-    set(bit_size_ - 1, value);
 }
 
 bool dynamic_bitset::all() const noexcept
@@ -67,14 +63,14 @@ bool dynamic_bitset::all() const noexcept
     if(empty())
         return true;
 
-    dynamic_bitset::size_t bits   = bit_size_;
-    dynamic_bitset::size_t offset = 0;
+    std::size_t bits   = bit_size_;
+    std::size_t offset = 0;
 
-    // I'm reading bits 8 by 8 as much as I can
+    // We read bits 8 by 8 as much as we can
     while(bits > 0)
     {
         // How many bits we read
-        auto size = std::min(static_cast<long long>(8), bits);
+        auto size = std::min(static_cast<std::size_t>(8ULL), bits);
 
         // Value the byte must have for every bit to be set
 
@@ -91,11 +87,29 @@ bool dynamic_bitset::all() const noexcept
         offset += size;
         bits -= size;
     }
-
     return true;
 }
 
-bool dynamic_bitset::in_range(dynamic_bitset::size_t bit_index) const
+bool dynamic_bitset::none() const noexcept
+{
+    return !any();
+}
+
+bool dynamic_bitset::empty() const noexcept
+{
+    return bit_size_ == 0;
+}
+
+void dynamic_bitset::push_back(bool value)
+{
+    if(byte_size() * 8 < bit_size_ + 1)
+        bytes_.push_back(0);
+
+    bit_size_++;
+    set(bit_size_ - 1, value);
+}
+
+bool dynamic_bitset::in_range(std::size_t bit_index) const
 {
     return (bit_index >= 0 && bit_index < bit_size_);
 }
@@ -106,13 +120,12 @@ void dynamic_bitset::set(bool value)
         value ? byte = byte_all_set : byte = 0;
 }
 
-dynamic_bitset dynamic_bitset::slice(dynamic_bitset::size_t begin,
-                                     dynamic_bitset::size_t len)
+dynamic_bitset dynamic_bitset::slice(std::size_t begin, std::size_t len)
 {
     return dynamic_bitset(begin, len);
 }
 
-void dynamic_bitset::set(dynamic_bitset::size_t pos, bool value)
+void dynamic_bitset::set(std::size_t pos, bool value)
 {
     auto byte_index = pos / bits_per_byte;
     auto bit_index  = pos % bits_per_byte;
@@ -147,15 +160,22 @@ unsigned long long dynamic_bitset::to_ullong() const
     return result;
 }
 
-dynamic_bitset::size_t dynamic_bitset::byte_size() const noexcept
+void dynamic_bitset::clear()
+{
+    bit_size_ = 0;
+}
+
+std::size_t dynamic_bitset::byte_size() const noexcept
 {
     return static_cast<int>(bytes_.size());
 }
 
-dynamic_bitset::dynamic_bitset(dynamic_bitset::size_t count, bool value)
+dynamic_bitset::dynamic_bitset(std::size_t count, bool value)
 {
-    if(count < 0)
-        throw std::invalid_argument("Bit count is less than 0");
+    // This won't always be detected depending on vector<unsigned
+    // char>::max_size
+    if(count > max_size())
+        throw std::length_error("Bit count is greater than bitset limit");
 
     bit_size_        = count;
     auto bytes_count = compute_byte_count_from_bit_count(count);
@@ -166,12 +186,12 @@ dynamic_bitset::dynamic_bitset(dynamic_bitset::size_t count, bool value)
         bytes_.resize(bytes_count, 0);
 }
 
-dynamic_bitset::size_t dynamic_bitset::size() const noexcept
+std::size_t dynamic_bitset::size() const noexcept
 {
     return bit_size_;
 }
 
-bool dynamic_bitset::test(dynamic_bitset::size_t pos) const
+bool dynamic_bitset::test(std::size_t pos) const
 {
     if(pos < 0 || pos >= bit_size_)
         throw std::invalid_argument("pos argument is out of bound");
