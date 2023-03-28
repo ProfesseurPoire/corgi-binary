@@ -20,7 +20,7 @@ public:
     /**
      * @brief   Maximum number of bits the element can hold.
      */
-    static constexpr inline std::size_t max_size() noexcept
+    static const inline std::size_t max_size() noexcept
     {
         std::vector<unsigned char> c;
         return c.max_size();
