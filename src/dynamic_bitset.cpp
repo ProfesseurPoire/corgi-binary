@@ -1,5 +1,6 @@
 #include <corgi/binary/dynamic_bitset.h>
 
+#include <cstring>
 #include <stdexcept>
 namespace
 {
