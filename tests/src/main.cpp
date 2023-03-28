@@ -44,27 +44,28 @@ int main()
                        assert_that(bs.test(1), corgi::test::equals(true));
                    });
 
-    test::add_test("dynamic_bitset", "push_back",
-                   []() -> void
-                   {
-                       binary::dynamic_bitset bs;
-                       bs.push_back(false);
-                       check_equals(bs.size(), 1ULL);
-                       check_equals(bs.byte_size(), 1ULL);
-                       check_equals(bs.test(0), false);
+    test::add_test(
+        "dynamic_bitset", "push_back",
+        []() -> void
+        {
+            binary::dynamic_bitset bs;
+            bs.push_back(false);
+            check_equals(bs.size(), static_cast<std::size_t>(1));
+            check_equals(bs.byte_size(), static_cast<std::size_t>(1));
+            check_equals(bs.test(0), false);
 
-                       bs.push_back(false);
-                       bs.push_back(false);
-                       bs.push_back(false);
-                       bs.push_back(false);
-                       bs.push_back(false);
-                       bs.push_back(false);
-                       bs.push_back(true);
-                       bs.push_back(false);
-                       check_equals(bs.size(), 9ULL);
-                       check_equals(bs.byte_size(), 2ULL);
-                       check_equals(bs.test(7ULL), true);
-                   });
+            bs.push_back(false);
+            bs.push_back(false);
+            bs.push_back(false);
+            bs.push_back(false);
+            bs.push_back(false);
+            bs.push_back(false);
+            bs.push_back(true);
+            bs.push_back(false);
+            check_equals(bs.size(), static_cast<std::size_t>(9));
+            check_equals(bs.byte_size(), static_cast<std::size_t>(2));
+            check_equals(bs.test(7), true);
+        });
 
     test::add_test("corgi-binary", "any",
                    []() -> void
