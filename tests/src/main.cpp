@@ -6,6 +6,24 @@ using namespace corgi;
 
 int main()
 {
+    test::add_test("dynamic_bitset", "max_size",
+                   []() -> void
+                   { std::cout << corgi::binary::dynamic_bitset::max_size(); });
+
+    test::add_test("dynamic_bitset", "allocate_more_than_max",
+                   []() -> void
+                   {
+                       check_any_throw(corgi::binary::dynamic_bitset(
+                           corgi::binary::dynamic_bitset::max_size() + 1));
+                   });
+
+    test::add_test("dynamic_bitset", "allocate_max",
+                   []() -> void
+                   {
+                       auto val = corgi::binary::dynamic_bitset::max_size();
+                       check_no_throw(corgi::binary::dynamic_bitset(val));
+                   });
+
     test::add_test("dynamic_bitset", "constructor",
                    []() -> void
                    {
@@ -35,8 +53,8 @@ int main()
                    {
                        binary::dynamic_bitset bs;
                        bs.push_back(false);
-                       check_equals(bs.size(), 1);
-                       check_equals(bs.byte_size(), 1);
+                       check_equals(bs.size(), 1LL);
+                       check_equals(bs.byte_size(), 1LL);
                        check_equals(bs.test(0), false);
 
                        bs.push_back(false);
@@ -47,9 +65,9 @@ int main()
                        bs.push_back(false);
                        bs.push_back(true);
                        bs.push_back(false);
-                       check_equals(bs.size(), 9);
-                       check_equals(bs.byte_size(), 2);
-                       check_equals(bs.test(7), true);
+                       check_equals(bs.size(), 9LL);
+                       check_equals(bs.byte_size(), 2LL);
+                       check_equals(bs.test(7LL), true);
                    });
 
     test::add_test("corgi-binary", "any",

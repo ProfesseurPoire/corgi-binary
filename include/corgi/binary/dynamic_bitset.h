@@ -16,13 +16,15 @@ namespace corgi::binary
 class dynamic_bitset
 {
 public:
+    using size_t = long long;
+
     /**
-     * @brief   Maximum number of element the container can hold. It could
-     * probably be a bit more but that will be enough
+     * @brief   Maximum number of bits the element can hold.
      */
-    static inline constexpr int max_size() noexcept
+    static inline constexpr size_t max_size() noexcept
     {
-        return std::numeric_limits<int>::max();
+        std::vector<unsigned char> c;
+        return c.max_size();
     }
 
     /**
@@ -34,7 +36,7 @@ public:
      *
      * @throws std::invalid_argument if count is less than 0
      */
-    dynamic_bitset(int count = 0, bool value = false);
+    dynamic_bitset(size_t count = 0, bool value = false);
 
     /**
      * @brief   Constructs and returns a new dynamic_bitset that is a subset of
@@ -47,7 +49,8 @@ public:
      * @throws std::invalid_argument Thrown if @p len is greater than begin +
      * bit_size_
      */
-    dynamic_bitset slice(int begin, int len);
+    dynamic_bitset slice(dynamic_bitset::size_t begin,
+                         dynamic_bitset::size_t len);
 
     /**
      * @brief   Adds a bit to the set
@@ -96,13 +99,13 @@ public:
      * @brief   Returns the number of bits in the container.
      * @return  The number of bit in the container.
      */
-    int size() const noexcept;
+    dynamic_bitset::size_t size() const noexcept;
 
     /**
      * @brief   Returns the number of bytes used by the container.
      * @return  The number of byte used by the container.
      */
-    int byte_size() const noexcept;
+    dynamic_bitset::size_t byte_size() const noexcept;
 
     /**
      * @brief   Returns a pointer to the array storing the packed bits.
@@ -118,7 +121,7 @@ public:
      * @retval true  : Bit located at @p pos is set
      * @retval false : Bit located at @p pos isn't set
      */
-    bool test(int pos) const;
+    bool test(dynamic_bitset::size_t pos) const;
 
     /**
      * @brief   Sets the bit located at @p pos to @p value
@@ -126,7 +129,7 @@ public:
      * @param pos   The position of the bit to set
      * @param value The value to set the bit to
      */
-    void set(int pos, bool value = true);
+    void set(dynamic_bitset::size_t pos, bool value = true);
 
     /**
      * @brief   Sets all bits to @p value
@@ -141,7 +144,7 @@ public:
      *
      * @param pos The position of the bit to flip
      */
-    void flip(int pos);
+    void flip(dynamic_bitset::size_t pos);
 
     /**
      * @brief Flips every bits
@@ -153,7 +156,7 @@ public:
      *
      * @param pos The position of the bit to set to false
      */
-    void reset(int pos);
+    void reset(dynamic_bitset::size_t pos);
 
     /**
      * @brief   Sets all the bits to false
@@ -180,7 +183,7 @@ private:
      * @retval true     bit_index is in range
      * @retval false    bit_index isn't in range
      */
-    bool in_range(int bit_index) const;
+    bool in_range(dynamic_bitset::size_t bit_index) const;
 
     /**
      * @brief   Bits are stored here
@@ -190,6 +193,6 @@ private:
     /**
      * @brief How many bits are stored by the bitset
      */
-    int bit_size_;
+    size_t bit_size_;
 };
 }    // namespace corgi::binary
