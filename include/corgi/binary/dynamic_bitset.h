@@ -16,15 +16,6 @@ class dynamic_bitset
 {
 public:
     /**
-     * @brief   Constructs a new dynamic bitset with @p count bits set to 0.
-     *
-     * @param count The number of bits stored by the container.
-     *
-     * @throws std::invalid_argument if count is less than 0
-     */
-    explicit dynamic_bitset(int count);
-
-    /**
      * @brief   Constructs a new dynamic bitset with @p count bits sets
      *          to @p value
      *
@@ -33,7 +24,7 @@ public:
      *
      * @throws std::invalid_argument if count is less than 0
      */
-    dynamic_bitset(int count, bool value);
+    dynamic_bitset(int count = 0, bool value = false);
 
     /**
      * @brief   Constructs and returns a new dynamic_bitset that is a subset of
@@ -49,6 +40,49 @@ public:
     dynamic_bitset slice(int begin, int len);
 
     /**
+     * @brief   Adds a bit to the set
+     * @param value The value of the new bit added to the set
+     */
+    void push_back(bool value);
+
+    /**
+     * @brief   Returns true if not bits have been stored
+     * @retval  True if no bits are stored
+     * @retval  False if at least 1 bit is stored
+     */
+    bool empty() const noexcept;
+
+    /**
+     * @brief   Returns true if all bits are set
+     *
+     * If the set is empty, returns true. (follows std::all_of() convention)
+     *
+     * @retval  True if every bit is set
+     * @retval  False if every bit is set
+     */
+    bool all() const noexcept;
+
+    /**
+     * @brief   Returns true if any bit is set
+     *
+     * If the set is empty, returns false. (follows std::any_of() convention)
+     *
+     * @retval  True if at least one bit is set
+     * @retval  False if no bit is set
+     */
+    bool any() const noexcept;
+
+    /**
+     * @brief   Returns true if every bit isn't set
+     *
+     * If the set is empty, returns true. (follows std::none_of() convention)
+     *
+     * @retval  True if every bit isn't set
+     * @retval  False if at least one bit is set
+     */
+    bool none() const noexcept;
+
+    /**
      * @brief   Returns the number of bits in the container.
      * @return  The number of bit in the container.
      */
@@ -58,7 +92,7 @@ public:
      * @brief   Returns the number of bytes used by the container.
      * @return  The number of byte used by the container.
      */
-    int byte_size() const;
+    int byte_size() const noexcept;
 
     /**
      * @brief   Returns a pointer to the array storing the packed bits.
@@ -147,10 +181,5 @@ private:
      * @brief How many bits are stored by the bitset
      */
     int bit_size_;
-
-    /**
-     * @brief How many bytes are used to store the @a bit_size_ bits
-     */
-    int byte_size_;
 };
 }    // namespace corgi::binary

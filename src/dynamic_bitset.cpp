@@ -1,7 +1,6 @@
 #include <corgi/binary/dynamic_bitset.h>
 
 #include <stdexcept>
-
 namespace
 {
 constexpr int           bits_per_byte = 8;
@@ -27,6 +26,72 @@ static int compute_byte_count_from_bit_count(int bit_count)
         byte_count++;
 
     return byte_count;
+}
+
+bool dynamic_bitset::any() const noexcept
+{
+    if(empty())
+        return false;
+
+    for(const auto& byte : bytes_)
+    {
+        if(byte != 0)
+            return true;
+    }
+    return false;
+}
+
+bool dynamic_bitset::none() const noexcept
+{
+    return !any();
+}
+
+bool dynamic_bitset::empty() const noexcept
+{
+    return bit_size_ == 0;
+}
+
+void dynamic_bitset::push_back(bool value)
+{
+    // We check if we need a new byte
+    if((bit_size_ + 1) % 8 == 1)
+        bytes_.push_back(0);
+
+    bit_size_++;
+    set(bit_size_ - 1, value);
+}
+
+bool dynamic_bitset::all() const noexcept
+{
+    if(empty())
+        return true;
+
+    int bits   = bit_size_;
+    int offset = 0;
+
+    // I'm reading bits 8 by 8 as much as I can
+    while(bits > 0)
+    {
+        // How many bits we read
+        auto size = std::min(8, bits);
+
+        // Value the byte must have for every bit to be set
+
+        // Sets size bits to 1
+        unsigned char val = (1 << size) - 1;
+
+        // we get back the byte index
+        auto byte_index = offset / 8;
+
+        // We compare the expected value with what we have in the array
+        if((bytes_[byte_index] & val) != val)
+            return false;
+
+        offset += size;
+        bits -= size;
+    }
+
+    return true;
 }
 
 bool dynamic_bitset::in_range(int bit_index) const
@@ -69,7 +134,7 @@ void dynamic_bitset::set(int pos, bool value)
 
 unsigned long long dynamic_bitset::to_ullong() const
 {
-    if(bit_size_ > sizeof(unsigned long long))
+    if(bit_size_ > (sizeof(unsigned long long) * 8))
     {
         throw std::overflow_error("dynamic_bitset : Too much bits in bitset to "
                                   "convert to an unsigned long long");
@@ -80,14 +145,9 @@ unsigned long long dynamic_bitset::to_ullong() const
     return result;
 }
 
-dynamic_bitset::dynamic_bitset(int count)
+int dynamic_bitset::byte_size() const noexcept
 {
-    if(count < 0)
-        throw std::invalid_argument("Bit count is less than 0");
-
-    bit_size_  = count;
-    byte_size_ = compute_byte_count_from_bit_count(count);
-    bytes_.resize(byte_size_, 0);
+    return static_cast<int>(bytes_.size());
 }
 
 dynamic_bitset::dynamic_bitset(int count, bool value)
@@ -95,16 +155,16 @@ dynamic_bitset::dynamic_bitset(int count, bool value)
     if(count < 0)
         throw std::invalid_argument("Bit count is less than 0");
 
-    bit_size_  = count;
-    byte_size_ = compute_byte_count_from_bit_count(count);
+    bit_size_        = count;
+    auto bytes_count = compute_byte_count_from_bit_count(count);
 
     if(value)
-        bytes_.resize(byte_size_, 0b11111111);
+        bytes_.resize(bytes_count, 0b11111111);
     else
-        bytes_.resize(byte_size_, 0);
+        bytes_.resize(bytes_count, 0);
 }
 
-int dynamic_bitset::size() const
+int dynamic_bitset::size() const noexcept
 {
     return bit_size_;
 }
