@@ -40,6 +40,11 @@ void dynamic_bitset::set(bool value)
         value ? byte = byte_all_set : byte = 0;
 }
 
+dynamic_bitset dynamic_bitset::slice(int begin, int len)
+{
+    return dynamic_bitset(begin, len);
+}
+
 void dynamic_bitset::set(int pos, bool value)
 {
     auto byte_index = pos / bits_per_byte;
@@ -76,16 +81,23 @@ unsigned long long dynamic_bitset::to_ullong() const
 }
 
 dynamic_bitset::dynamic_bitset(int count)
-    : bit_size_(count)
-    , byte_size_(compute_byte_count_from_bit_count(count))
 {
+    if(count < 0)
+        throw std::invalid_argument("Bit count is less than 0");
+
+    bit_size_  = count;
+    byte_size_ = compute_byte_count_from_bit_count(count);
     bytes_.resize(byte_size_, 0);
 }
 
 dynamic_bitset::dynamic_bitset(int count, bool value)
-    : bit_size_(count)
-    , byte_size_(compute_byte_count_from_bit_count(count))
 {
+    if(count < 0)
+        throw std::invalid_argument("Bit count is less than 0");
+
+    bit_size_  = count;
+    byte_size_ = compute_byte_count_from_bit_count(count);
+
     if(value)
         bytes_.resize(byte_size_, 0b11111111);
     else

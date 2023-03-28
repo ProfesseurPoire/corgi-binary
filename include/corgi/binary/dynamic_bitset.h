@@ -19,6 +19,8 @@ public:
      * @brief   Constructs a new dynamic bitset with @p count bits set to 0.
      *
      * @param count The number of bits stored by the container.
+     *
+     * @throws std::invalid_argument if count is less than 0
      */
     explicit dynamic_bitset(int count);
 
@@ -28,14 +30,29 @@ public:
      *
      * @param count The number of bits stored by the container.
      * @param value The default value for every bit in the container.
+     *
+     * @throws std::invalid_argument if count is less than 0
      */
     dynamic_bitset(int count, bool value);
+
+    /**
+     * @brief   Constructs and returns a new dynamic_bitset that is a subset of
+     * the current dynamic_bitset.
+     *
+     * The newly constructed dynamic_bitset starts at @p begin and contains @p
+     * len elements
+     *
+     * @throws std::invalid_argument Thrown if @p begin is out of bound
+     * @throws std::invalid_argument Thrown if @p len is greater than begin +
+     * bit_size_
+     */
+    dynamic_bitset slice(int begin, int len);
 
     /**
      * @brief   Returns the number of bits in the container.
      * @return  The number of bit in the container.
      */
-    int size() const;
+    int size() const noexcept;
 
     /**
      * @brief   Returns the number of bytes used by the container.
@@ -75,8 +92,8 @@ public:
     /**
      * @brief   Flips the bit located at @p pos
      *
-     *          If a bit is equals to zero, it becomes 1, and if a bit is equal
-     *          to one it becomes zero.
+     * If a bit is equals to zero, it becomes 1, and if a bit is equal
+     * to one it becomes zero.
      *
      * @param pos The position of the bit to flip
      */
@@ -102,9 +119,9 @@ public:
     /**
      * @brief   Converts the bits to a ullong value.
      *
-     *          This function will throw a std::overflow_error if the value
-     *          cannot be converted to a unsigned long long. IE, it has more
-     *          than 64 bits.
+     * This function will throw a std::overflow_error if the value
+     * cannot be converted to a unsigned long long. IE, it has more
+     * than 64 bits.
      *
      * @return The converted value
      */
@@ -114,7 +131,7 @@ private:
     /**
      * @brief   Checks if @p bit_index is in range.
      *
-     *          In range means bit_index is > 0 and < to bit_size
+     * In range means bit_index is > 0 and < to bit_size
      *
      * @retval true     bit_index is in range
      * @retval false    bit_index isn't in range

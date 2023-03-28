@@ -61,5 +61,21 @@ int main()
                        assert_that(bs.to_ullong(), corgi::test::equals(16));
                    });
 
+    test::add_test("dynamic_bitset", "slice",
+                   []()
+                   {
+                       //    binary::dynamic_bitset set(10, 1);
+                       //    set.set(0, 0);
+
+                       //    auto subset = set.slice(0, 5);
+
+                       //    check_equals(subset.size(), 5);
+                       //    check_equals(subset[0], false);
+                       //    check_equals(subset[1], true);
+                       //    check_equals(subset[2], true);
+                       //    check_equals(subset[3], true);
+                       //    check_equals(subset[4], true);
+                   });
+
     return test::run_all();
 }
