@@ -1,5 +1,6 @@
 #pragma once
 
+#include <limits>
 #include <vector>
 
 namespace corgi::binary
@@ -15,6 +16,15 @@ namespace corgi::binary
 class dynamic_bitset
 {
 public:
+    /**
+     * @brief   Maximum number of element the container can hold. It could
+     * probably be a bit more but that will be enough
+     */
+    static inline constexpr int max_size() noexcept
+    {
+        return std::numeric_limits<int>::max();
+    }
+
     /**
      * @brief   Constructs a new dynamic bitset with @p count bits sets
      *          to @p value
