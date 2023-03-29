@@ -19,6 +19,35 @@ int main()
                         std::length_error);
         });
 
+    test::add_test(
+        "dynamic_bitset", "insert",
+        []() -> void
+        {
+            corgi::binary::dynamic_bitset bs {true, true, false, false};
+            bs.insert(2, 3, true);
+
+            check_equals(bs.size(), static_cast<std::size_t>(7));
+            check_equals(bs.test(0), true);
+            check_equals(bs.test(1), true);
+            check_equals(bs.test(2), true);
+            check_equals(bs.test(3), true);
+            check_equals(bs.test(4), true);
+            check_equals(bs.test(5), false);
+            check_equals(bs.test(6), false);
+        });
+
+    test::add_test(
+        "dynamic_bitset", "constructor",
+        []() -> void
+        {
+            corgi::binary::dynamic_bitset bs({true, false, false, true});
+            check_equals(bs.size(), static_cast<std::size_t>(4));
+            check_equals(bs.test(0), true);
+            check_equals(bs.test(1), false);
+            check_equals(bs.test(2), false);
+            check_equals(bs.test(3), true);
+        });
+
     test::add_test("dynamic_bitset", "at",
                    []() -> void
                    {

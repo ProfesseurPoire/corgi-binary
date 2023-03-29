@@ -30,11 +30,6 @@ static std::size_t compute_byte_count_from_bit_count(std::size_t bit_count)
     return byte_count;
 }
 
-bool dynamic_bitset::operator[](std::size_t pos) const
-{
-    return test(pos);
-}
-
 bool dynamic_bitset::any() const noexcept
 {
     if(empty())
@@ -63,6 +58,30 @@ bool dynamic_bitset::any() const noexcept
         bits -= size;
     }
     return false;
+}
+
+void dynamic_bitset::insert(std::size_t pos, std::size_t len, bool val)
+{
+    const auto previous_size = bit_size_;
+
+    // Maybe I should reuse this part to allocate memory so I don't
+    // mix things up
+    auto bytes = (bit_size_ + len) / 8;
+    if((bit_size_ + len) % 8 != 0)
+        bytes++;
+    bytes_.resize(bytes);
+
+    bit_size_ += len;
+
+    for(auto i = pos; i < previous_size; i++)
+    {
+        set(i + len, test(i));
+    }
+
+    for(auto i = pos; i < pos + len; i++)
+    {
+        set(i, val);
+    }
 }
 
 bool dynamic_bitset::all() const noexcept
@@ -185,12 +204,28 @@ dynamic_bitset::dynamic_bitset(std::size_t count, bool value)
         throw std::length_error("Bit count is greater than bitset limit");
 
     bit_size_        = count;
-    auto bytes_count = compute_byte_count_from_bit_count(count);
+    auto bytes_count = compute_byte_count_from_bit_count(bit_size_);
 
     if(value)
         bytes_.resize(bytes_count, 0b11111111);
     else
         bytes_.resize(bytes_count, 0);
+}
+
+dynamic_bitset::dynamic_bitset(std::initializer_list<bool> bits)
+{
+    if(bits.size() > max_size())
+        throw std::length_error(
+            "Initializer list count is greater than bitset limit");
+
+    bit_size_        = bits.size();
+    auto bytes_count = compute_byte_count_from_bit_count(bit_size_);
+
+    bytes_.resize(bytes_count, 0b11111111);
+
+    std::size_t pos = 0;
+    for(const auto bit : bits)
+        set(pos++, bit);
 }
 
 std::size_t dynamic_bitset::size() const noexcept

@@ -27,15 +27,8 @@ public:
     }
 
     /**
-     * @brief Erases every bit from the container
-     *
-     * Warning, this doesn't resize the container
-     */
-    void clear();
-
-    /**
-     * @brief   Constructs a new dynamic bitset with @p count bits sets
-     *          to @p value
+     * @brief Constructs a new dynamic bitset with @p count bits sets to
+     * @p value
      *
      * @param count The number of bits stored by the container.
      * @param value The default value for every bit in the container.
@@ -43,6 +36,15 @@ public:
      * @throws std::invalid_argument if count is less than 0
      */
     explicit dynamic_bitset(std::size_t count = 0, bool value = false);
+
+    /**
+     * @brief Constructs a new dynamic_bitset with values inside @p bits
+     *
+     * @param bits Bits inserted to the dynamic_bitset
+     *
+     * @throws std::length_error Thrown if @p bits is greater than @p max_size
+     */
+    explicit dynamic_bitset(std::initializer_list<bool> bits);
 
     /**
      * @brief   Constructs and returns a new dynamic_bitset that is a subset of
@@ -58,13 +60,58 @@ public:
     dynamic_bitset slice(std::size_t begin, std::size_t len);
 
     /**
-     * @brief   Returns a copy of the bit value located at @p pos
+     * @brief Erases every bit from the container
      *
-     * @param pos Locationg of the bit we want to access
-     * @retval  True if the bit located at @p pos is set
-     * @retval  False if the bit located at @p pos isn't set
+     * Warning, this doesn't resize the container
      */
-    bool operator[](std::size_t pos) const;
+    void clear();
+
+    /**
+     * @brief Insert @p len bits equals to @p val before @p pos.
+     *
+     * Existing bits at @p pos are shifted to the right
+     * @param pos Position where we insert the bits
+     * @param len How many bits are inserted at the @p pos location
+     * @param val Value of inserted bits
+     *
+     * @throws std::out_of_range Throw if @p pos is out of range
+     */
+    void insert(std::size_t pos, std::size_t len, bool val);
+
+    /**
+     * @brief Insert new bit equals to @p val before @p pos
+     *
+     * @param pos Position where we insert the new bit
+     * @param val Value of the inserted bit
+     */
+    void insert(std::size_t pos, bool val);
+
+    /**
+     * @brief Insert the bits inside @p values before @p pos
+     */
+    void insert(std::size_t pos, std::initializer_list<bool> values);
+
+    /**
+     * @brief Erase the bit located at @p pos
+     *
+     * The function will copy every bit after @p pos to their new position.
+     * The function doesn't change memory allocation
+     *
+     * @param pos Position of the bit to remove
+     *
+     * @throws std::out_of_range Thrown if @p pos is out range
+     */
+    void erase(std::size_t pos);
+
+    /**
+     * @brief Erase the bits from @p start to @p end
+     *
+     * @param start First bit to erase
+     * @param end   Last bit to erase
+     *
+     * @throws std::out_of_range Thrown if @p start or @p pos is out of range
+     */
+    void erase(std::size_t start, std::size_t end);
 
     /**
      * @brief   Adds a bit to the set
@@ -78,6 +125,25 @@ public:
      * @retval  False if at least 1 bit is stored
      */
     bool empty() const noexcept;
+
+    /**
+     * @brief Erase the last bit from the container.
+     */
+    void pop_back();
+
+    /**
+     * @brief Resize the container so it holds @p len bits. New bits are
+     * equals to @p value
+     *
+     * Does nothing if len == bit_size_
+     * @param len
+     */
+    void resize(std::size_t len, bool value = true);
+
+    /**
+     * @brief Resize the container so it can hold up to @p len bits
+     */
+    void reserve(std::size_t len);
 
     /**
      * @brief   Returns true if all bits are set
@@ -130,9 +196,6 @@ public:
     /**
      * @brief   Returns a copy of the bit value located at @p pos with bound
      * checking
-     *
-     * The difference with the subscript [] operator is that this function bound
-     * checks @p pos and throws an exception if pos is out of range
      *
      * @param pos Locationg of the bit we want to access
      * @retval  True if the bit located at @p pos is set
