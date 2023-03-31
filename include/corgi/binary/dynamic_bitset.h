@@ -70,11 +70,12 @@ public:
      * @brief Insert @p len bits equals to @p val before @p pos.
      *
      * Existing bits at @p pos are shifted to the right
+     *
      * @param pos Position where we insert the bits
      * @param len How many bits are inserted at the @p pos location
      * @param val Value of inserted bits
      *
-     * @throws std::out_of_range Throw if @p pos is out of range
+     * @throws std::out_of_range Thrown if @p pos is out of range
      */
     void insert(std::size_t pos, std::size_t len, bool val);
 
@@ -83,13 +84,20 @@ public:
      *
      * @param pos Position where we insert the new bit
      * @param val Value of the inserted bit
+     *
+     * @throws std::out_of_range Thrown if @p pos is out of range
      */
     void insert(std::size_t pos, bool val);
 
     /**
-     * @brief Insert the bits inside @p values before @p pos
+     * @brief Insert the @p bits before @p pos
+     *
+     * @param pos Position where we insert the bits
+     * @param bits Bits to insert inside the container
+     *
+     * @throws std::out_of_range Thrown if @p pos is out of range
      */
-    void insert(std::size_t pos, std::initializer_list<bool> values);
+    void insert(std::size_t pos, std::initializer_list<bool> bits);
 
     /**
      * @brief Erase the bit located at @p pos

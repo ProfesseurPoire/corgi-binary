@@ -84,6 +84,11 @@ void dynamic_bitset::insert(std::size_t pos, std::size_t len, bool val)
     }
 }
 
+void dynamic_bitset::insert(std::size_t pos, bool val)
+{
+    insert(pos, 1, val);
+}
+
 bool dynamic_bitset::all() const noexcept
 {
     if(empty())

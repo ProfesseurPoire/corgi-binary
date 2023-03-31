@@ -37,8 +37,35 @@ int main()
         });
 
     test::add_test("dynamic_bitset", "insert_one",
-                   []() -> void {
+                   []() -> void
+                   {
+                       corgi::binary::dynamic_bitset bs;
+                       bs.insert(0, true);
+                       check_equals(bs.size(), static_cast<std::size_t>(1));
+                       check_equals(bs.test(0), true);
 
+                       bs.insert(1, 4, false);
+                       check_equals(bs.size(), static_cast<std::size_t>(5));
+                       check_equals(bs.test(0), true);
+                       check_equals(bs.test(1), false);
+                       check_equals(bs.test(2), false);
+                       check_equals(bs.test(3), false);
+                       check_equals(bs.test(4), false);
+
+                       bs.insert(4, 4, true);
+                       check_equals(bs.size(), static_cast<std::size_t>(6));
+                   });
+
+    test::add_test("dynamic_bitset", "insert_initializer_list",
+                   []() -> void
+                   {
+                       corgi::binary::dynamic_bitset bs;
+                       bs.insert(0, {true, true, false, true});
+                       check_equals(bs.size(), static_cast<std::size_t>(4));
+                       check_equals(bs.test(0), true);
+                       check_equals(bs.test(1), true);
+                       check_equals(bs.test(2), false);
+                       check_equals(bs.test(3), true);
                    });
 
     test::add_test(
