@@ -20,9 +20,9 @@ public:
     /**
      * @brief   Maximum number of bits the element can hold.
      */
-    static const inline std::size_t max_size() noexcept
+    static inline std::size_t max_size() noexcept
     {
-        std::vector<unsigned char> c;
+        const std::vector<unsigned char> c;
         return c.max_size();
     }
 
@@ -44,7 +44,7 @@ public:
      *
      * @throws std::length_error Thrown if @p bits is greater than @p max_size
      */
-    explicit dynamic_bitset(std::initializer_list<bool> bits);
+    dynamic_bitset(std::initializer_list<bool> bits);
 
     /**
      * @brief   Constructs and returns a new dynamic_bitset that is a subset of

@@ -36,6 +36,11 @@ int main()
             check_equals(bs.test(6), false);
         });
 
+    test::add_test("dynamic_bitset", "insert_one",
+                   []() -> void {
+
+                   });
+
     test::add_test(
         "dynamic_bitset", "constructor",
         []() -> void
