@@ -36,6 +36,29 @@ int main()
             check_equals(bs.test(6), false);
         });
 
+    test::add_test("dynamic_bitset", "insert_initializer_list",
+                   []() -> void
+                   {
+                       corgi::binary::dynamic_bitset bs;
+                       bs.insert(0, {true, false, true, false});
+                       check_equals(bs.size(), static_cast<std::size_t>(4));
+                       check_equals(bs.test(0), true);
+                       check_equals(bs.test(1), false);
+                       check_equals(bs.test(2), true);
+                       check_equals(bs.test(3), false);
+
+                       bs.insert(1, {true, false});
+                       check_equals(bs.size(), static_cast<std::size_t>(6));
+                       check_equals(bs.test(0), true);
+                       check_equals(bs.test(1), true);
+                       check_equals(bs.test(2), false);
+                       check_equals(bs.test(3), false);
+                       check_equals(bs.test(4), true);
+                       check_equals(bs.test(5), false);
+
+                       check_throw(bs.insert(10, {false}), std::out_of_range);
+                   });
+
     test::add_test("dynamic_bitset", "insert_one",
                    []() -> void
                    {
@@ -53,19 +76,18 @@ int main()
                        check_equals(bs.test(4), false);
 
                        bs.insert(4, 4, true);
-                       check_equals(bs.size(), static_cast<std::size_t>(6));
-                   });
-
-    test::add_test("dynamic_bitset", "insert_initializer_list",
-                   []() -> void
-                   {
-                       corgi::binary::dynamic_bitset bs;
-                       bs.insert(0, {true, true, false, true});
-                       check_equals(bs.size(), static_cast<std::size_t>(4));
+                       check_equals(bs.size(), static_cast<std::size_t>(9));
                        check_equals(bs.test(0), true);
-                       check_equals(bs.test(1), true);
+                       check_equals(bs.test(1), false);
                        check_equals(bs.test(2), false);
-                       check_equals(bs.test(3), true);
+                       check_equals(bs.test(3), false);
+                       check_equals(bs.test(4), true);
+                       check_equals(bs.test(5), true);
+                       check_equals(bs.test(6), true);
+                       check_equals(bs.test(7), true);
+                       check_equals(bs.test(8), false);
+
+                       check_throw(bs.insert(10, true), std::out_of_range);
                    });
 
     test::add_test(
@@ -184,6 +206,37 @@ int main()
             check_equals(bs.test(1), true);
             check_equals(bs.size(), static_cast<std::size_t>(2));
             check_equals(bs.byte_size(), static_cast<std::size_t>(2));
+        });
+
+    test::add_test(
+        "dynamic_bitset", "erase",
+        []() -> void
+        {
+            binary::dynamic_bitset bs({true, false, true, true, false});
+            bs.erase(3);
+            check_equals(bs.size(), static_cast<std::size_t>(4));
+            check_equals(bs.test(0), true);
+            check_equals(bs.test(1), false);
+            check_equals(bs.test(2), true);
+            check_equals(bs.test(3), false);
+
+            check_throw(bs.erase(5), std::out_of_range);
+        });
+
+    test::add_test(
+        "dynamic_bitset", "erase_range",
+        []() -> void
+        {
+            binary::dynamic_bitset bs({true, false, true, true, false});
+            bs.erase(2, 3);
+            check_equals(bs.size(), static_cast<std::size_t>(3));
+            check_equals(bs.test(0), true);
+            check_equals(bs.test(1), false);
+            check_equals(bs.test(2), false);
+
+            check_throw(bs.erase(1, 8), std::out_of_range);
+            check_throw(bs.erase(10, 8), std::out_of_range);
+            check_throw(bs.erase(2, 1), std::invalid_argument);
         });
 
     test::add_test("corgi-binary", "empty",

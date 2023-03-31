@@ -117,7 +117,8 @@ public:
      * @param start First bit to erase
      * @param end   Last bit to erase
      *
-     * @throws std::out_of_range Thrown if @p start or @p pos is out of range
+     * @throws std::out_of_range Thrown if @p start or @p end is out of range
+     * @throws std::invalid_argument Thrown if @p start is bigger than @p end
      */
     void erase(std::size_t start, std::size_t end);
 
@@ -275,6 +276,11 @@ private:
      * @retval false    bit_index isn't in range
      */
     bool in_range(std::size_t bit_index) const;
+
+    /**
+     * @brief Reallocate the container if needed to hold up to @p len bits
+     */
+    void reallocate(std::size_t len);
 
     /**
      * @brief   Bits are stored here

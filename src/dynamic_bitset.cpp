@@ -60,33 +60,94 @@ bool dynamic_bitset::any() const noexcept
     return false;
 }
 
-void dynamic_bitset::insert(std::size_t pos, std::size_t len, bool val)
+void dynamic_bitset::reallocate(const std::size_t len)
 {
-    const auto previous_size = bit_size_;
-
-    // Maybe I should reuse this part to allocate memory so I don't
-    // mix things up
     auto bytes = (bit_size_ + len) / 8;
     if((bit_size_ + len) % 8 != 0)
         bytes++;
     bytes_.resize(bytes);
+}
 
+void dynamic_bitset::insert(const std::size_t                 pos,
+                            const std::initializer_list<bool> bits)
+{
+    if(pos > bit_size_)
+        throw std::out_of_range(std::format("Argument pos is equal to {} and "
+                                            "is out of range [{},{}]",
+                                            pos, 0, bit_size_));
+
+    const auto previous_size = bit_size_;
+
+    reallocate(bit_size_ + bits.size());
+    bit_size_ += bits.size();
+
+    for(auto i = pos; i < previous_size; i++)
+        set(i + bits.size(), test(i));
+
+    auto i = pos;
+    for(const auto b : bits)
+        set(i++, b);
+}
+
+void dynamic_bitset::insert(std::size_t pos, std::size_t len, bool val)
+{
+    if(pos > bit_size_)
+        throw std::out_of_range(std::format("Argument pos is equal to {} and "
+                                            "is out of range [{},{}]",
+                                            pos, 0, bit_size_));
+    const auto previous_size = bit_size_;
+
+    reallocate(bit_size_ + len);
     bit_size_ += len;
 
     for(auto i = pos; i < previous_size; i++)
-    {
         set(i + len, test(i));
-    }
 
     for(auto i = pos; i < pos + len; i++)
-    {
         set(i, val);
-    }
 }
 
 void dynamic_bitset::insert(std::size_t pos, bool val)
 {
     insert(pos, 1, val);
+}
+
+void dynamic_bitset::erase(const std::size_t pos)
+{
+    if(!in_range(pos))
+        throw std::out_of_range(
+            std::format("Argument pos is out of range : {}", pos));
+
+    for(auto i = pos; i < bit_size_ - 1; i++)
+    {
+        set(i, test(i + 1));
+    }
+
+    bit_size_--;
+}
+
+void dynamic_bitset::erase(const std::size_t start, const std::size_t end)
+{
+    if(!in_range(start))
+        throw std::out_of_range(
+            std::format("Argument start is out of range : {}", start));
+
+    if(!in_range(end))
+        throw std::out_of_range(
+            std::format("Argument end is out of range : {}", end));
+
+    if(start > end)
+        throw std::invalid_argument(
+            "Argument start is greater than argument end");
+
+    std::size_t t = 0;
+
+    for(auto i = end + 1; i < bit_size_; i++)
+    {
+        set(start + t++, test(i));
+    }
+
+    bit_size_ -= end - start + 1;
 }
 
 bool dynamic_bitset::all() const noexcept
