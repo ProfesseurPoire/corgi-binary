@@ -150,6 +150,19 @@ void dynamic_bitset::erase(const std::size_t start, const std::size_t end)
     bit_size_ -= end - start + 1;
 }
 
+bool dynamic_bitset::operator==(const dynamic_bitset& other) const noexcept
+{
+    if(other.size() != size())
+        return false;
+
+    for(std::size_t i = 0; i < size(); i++)
+    {
+        if(other.test(i) != test(i))
+            return false;
+    }
+    return true;
+}
+
 bool dynamic_bitset::all() const noexcept
 {
     if(empty())
@@ -201,6 +214,12 @@ void dynamic_bitset::push_back(bool value)
     set(bit_size_ - 1, value);
 }
 
+void dynamic_bitset::pop_back()
+{
+    if(bit_size_ != 0)
+        bit_size_--;
+}
+
 bool dynamic_bitset::in_range(std::size_t bit_index) const
 {
     return (bit_index < bit_size_);
@@ -212,13 +231,35 @@ void dynamic_bitset::set(bool value)
         value ? byte = byte_all_set : byte = 0;
 }
 
-dynamic_bitset dynamic_bitset::slice(std::size_t begin, std::size_t len)
+dynamic_bitset dynamic_bitset::slice(std::size_t start, std::size_t end)
 {
-    return dynamic_bitset(begin, len);
+    if(!in_range(start))
+        throw std::out_of_range(
+            std::format("Argument start is out of range : {}", start));
+
+    if(!in_range(end))
+        throw std::out_of_range(
+            std::format("Argument end is out of range : {}", end));
+
+    if(start > end)
+        throw std::invalid_argument(
+            "Argument start is greater than argument end");
+
+    dynamic_bitset bs(end - start + 1);
+
+    std::size_t j = 0;
+    for(auto i = start; i <= end; i++)
+    {
+        bs.set(j++, test(i));
+    }
+    return bs;
 }
 
 void dynamic_bitset::set(std::size_t pos, bool value)
 {
+    if(!in_range(pos))
+        throw std::out_of_range(std::format(
+            "Argument pos is out of range : {} !E [{},{}]", pos, 0, bit_size_));
     auto byte_index = pos / bits_per_byte;
     auto bit_index  = pos % bits_per_byte;
 

@@ -36,6 +36,35 @@ int main()
             check_equals(bs.test(6), false);
         });
 
+    test::add_test("dynamic_bitset", "slice",
+                   []() -> void
+                   {
+                       corgi::binary::dynamic_bitset bs(
+                           {true, false, true, false, true, false});
+
+                       auto s = bs.slice(2, 4);
+
+                       check_equals(s.size(), static_cast<std::size_t>(3));
+                       check_equals(s.test(0), true);
+                       check_equals(s.test(1), false);
+                       check_equals(s.test(2), true);
+
+                       check_throw(bs.slice(6, 2), std::out_of_range);
+                       check_throw(bs.slice(1, 10), std::out_of_range);
+                       check_throw(bs.slice(3, 2), std::invalid_argument);
+                   });
+
+    test::add_test("dynamic_bitset", "comparison",
+                   []() -> void
+                   {
+                       corgi::binary::dynamic_bitset bs {true, false, true};
+                       corgi::binary::dynamic_bitset bs2 {true, false, true};
+                       bs2.push_back("true");
+                       bs2.pop_back();
+
+                       check_equals(bs, bs2);
+                   });
+
     test::add_test("dynamic_bitset", "insert_initializer_list",
                    []() -> void
                    {

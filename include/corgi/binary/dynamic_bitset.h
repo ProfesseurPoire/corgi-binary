@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include <limits>
 #include <vector>
 
 namespace corgi::binary
@@ -50,14 +49,16 @@ public:
      * @brief   Constructs and returns a new dynamic_bitset that is a subset of
      * the current dynamic_bitset.
      *
-     * The newly constructed dynamic_bitset starts at @p begin and contains @p
-     * len elements
+     * The newly constructed dynamic_bitset contains bits from @p start to
+     * @p end
      *
      * @throws std::invalid_argument Thrown if @p begin is out of bound
-     * @throws std::invalid_argument Thrown if @p len is greater than begin +
+     * @throws std::invalid_argument Thrown if @p end is greater than begin +
      * bit_size_
      */
-    dynamic_bitset slice(std::size_t begin, std::size_t len);
+    dynamic_bitset slice(std::size_t begin, std::size_t end);
+
+    friend std::ostream& operator<<(std::ostream& os, const dynamic_bitset& dt);
 
     /**
      * @brief Erases every bit from the container
@@ -65,6 +66,14 @@ public:
      * Warning, this doesn't resize the container
      */
     void clear();
+
+    /**
+     * @brief Compares 2 dynamic_bitset
+     *
+     * @retval True If 2 bitsets are equivalents
+     * @retval False If the 2 bitset are not equivalents.
+     */
+    bool operator==(const dynamic_bitset& other) const noexcept;
 
     /**
      * @brief Insert @p len bits equals to @p val before @p pos.
@@ -146,6 +155,7 @@ public:
      *
      * Does nothing if len == bit_size_
      * @param len
+     * @param value
      */
     void resize(std::size_t len, bool value = true);
 
@@ -292,4 +302,13 @@ private:
      */
     std::size_t bit_size_;
 };
+
+inline std::ostream& operator<<(std::ostream& os, const dynamic_bitset& bs)
+{
+    for(std::size_t i = 0; i < bs.size(); i++)
+    {
+        os << bs.test(i);
+    }
+    return os;
+}
 }    // namespace corgi::binary
