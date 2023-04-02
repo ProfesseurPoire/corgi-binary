@@ -258,8 +258,9 @@ dynamic_bitset dynamic_bitset::slice(std::size_t start, std::size_t end)
 void dynamic_bitset::set(std::size_t pos, bool value)
 {
     if(!in_range(pos))
-        throw std::out_of_range(std::format(
-            "Argument pos is out of range : {} !E [{},{}]", pos, 0, bit_size_));
+        throw std::out_of_range(
+            std::format("Argument pos is out of range : {}", pos));
+
     auto byte_index = pos / bits_per_byte;
     auto bit_index  = pos % bits_per_byte;
 
