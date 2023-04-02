@@ -1,7 +1,6 @@
 #include <corgi/binary/dynamic_bitset.h>
 
 #include <cstring>
-#include <format>
 #include <stdexcept>
 namespace
 {
@@ -72,9 +71,7 @@ void dynamic_bitset::insert(const std::size_t                 pos,
                             const std::initializer_list<bool> bits)
 {
     if(pos > bit_size_)
-        throw std::out_of_range(std::format("Argument pos is equal to {} and "
-                                            "is out of range [{},{}]",
-                                            pos, 0, bit_size_));
+        throw std::out_of_range("Argument pos is equal is out of range");
 
     const auto previous_size = bit_size_;
 
@@ -92,9 +89,7 @@ void dynamic_bitset::insert(const std::size_t                 pos,
 void dynamic_bitset::insert(std::size_t pos, std::size_t len, bool val)
 {
     if(pos > bit_size_)
-        throw std::out_of_range(std::format("Argument pos is equal to {} and "
-                                            "is out of range [{},{}]",
-                                            pos, 0, bit_size_));
+        throw std::out_of_range("Argument pos is out of range ");
     const auto previous_size = bit_size_;
 
     reallocate(bit_size_ + len);
@@ -115,8 +110,7 @@ void dynamic_bitset::insert(std::size_t pos, bool val)
 void dynamic_bitset::erase(const std::size_t pos)
 {
     if(!in_range(pos))
-        throw std::out_of_range(
-            std::format("Argument pos is out of range : {}", pos));
+        throw std::out_of_range("Argument pos is out of range");
 
     for(auto i = pos; i < bit_size_ - 1; i++)
     {
@@ -129,12 +123,10 @@ void dynamic_bitset::erase(const std::size_t pos)
 void dynamic_bitset::erase(const std::size_t start, const std::size_t end)
 {
     if(!in_range(start))
-        throw std::out_of_range(
-            std::format("Argument start is out of range : {}", start));
+        throw std::out_of_range("Argument start is out of range ");
 
     if(!in_range(end))
-        throw std::out_of_range(
-            std::format("Argument end is out of range : {}", end));
+        throw std::out_of_range("Argument end is out of range ");
 
     if(start > end)
         throw std::invalid_argument(
@@ -234,12 +226,10 @@ void dynamic_bitset::set(bool value)
 dynamic_bitset dynamic_bitset::slice(std::size_t start, std::size_t end)
 {
     if(!in_range(start))
-        throw std::out_of_range(
-            std::format("Argument start is out of range : {}", start));
+        throw std::out_of_range("Argument start is out of range");
 
     if(!in_range(end))
-        throw std::out_of_range(
-            std::format("Argument end is out of range : {}", end));
+        throw std::out_of_range("Argument end is out of range");
 
     if(start > end)
         throw std::invalid_argument(
@@ -258,8 +248,7 @@ dynamic_bitset dynamic_bitset::slice(std::size_t start, std::size_t end)
 void dynamic_bitset::set(std::size_t pos, bool value)
 {
     if(!in_range(pos))
-        throw std::out_of_range(
-            std::format("Argument pos is out of range : {}", pos));
+        throw std::out_of_range("Argument pos is out of range");
 
     auto byte_index = pos / bits_per_byte;
     auto bit_index  = pos % bits_per_byte;
@@ -344,10 +333,7 @@ std::size_t dynamic_bitset::size() const noexcept
 bool dynamic_bitset::test(std::size_t pos) const
 {
     if(!in_range(pos))
-        throw std::out_of_range(
-            std::format("dynamic_bitset::at : Argument pos is equal to {} and "
-                        "is out of range [{},{}]",
-                        pos, 0, bit_size_));
+        throw std::out_of_range("Argument pos is out of range ");
 
     return static_cast<bool>(
         bytes_[pos / bits_per_byte] >> (pos % bits_per_byte) & 1);
