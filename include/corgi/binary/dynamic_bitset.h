@@ -213,6 +213,12 @@ public:
     unsigned char* data();
 
     /**
+     * @brief Returns a pointer to the array storing the packed bis.
+     * @return Const pointer to the array
+     */
+    const unsigned char* data() const;
+
+    /**
      * @brief   Returns a copy of the bit value located at @p pos with bound
      * checking
      *
@@ -275,6 +281,11 @@ public:
      * @return The converted value
      */
     unsigned long long to_ullong() const;
+
+    /**
+     * @brief Converts the bits from @p pos to @p pos + @p len to a ullong value
+     */
+    unsigned long long to_ullong(std::size_t pos, std::size_t len);
 
 private:
     /**

@@ -1,7 +1,9 @@
+#include <corgi/binary/binary.h>
 #include <corgi/binary/dynamic_bitset.h>
 
 #include <cstring>
 #include <stdexcept>
+
 namespace
 {
 constexpr int           bits_per_byte = 8;
@@ -270,6 +272,23 @@ void dynamic_bitset::set(std::size_t pos, bool value)
     //     bytes_[byte_index] &= ~mask;
 }
 
+void dynamic_bitset::reset(std::size_t pos)
+{
+    if(!in_range(pos))
+        throw std::out_of_range("Argument pos is out of range");
+
+    const auto byte_index = pos / bits_per_byte;
+    const auto bit_index  = pos % bits_per_byte;
+
+    bytes_[byte_index] &= ~(1 << bit_index);
+}
+
+void dynamic_bitset::reset()
+{
+    for(auto& b : bytes_)
+        b = 0;
+}
+
 unsigned long long dynamic_bitset::to_ullong() const
 {
     if(bit_size_ > (sizeof(unsigned long long) * 8))
@@ -283,6 +302,11 @@ unsigned long long dynamic_bitset::to_ullong() const
     return result;
 }
 
+unsigned long long dynamic_bitset::to_ullong(std::size_t pos, std::size_t len)
+{
+    return bits_to_llong(pos, len, bytes_.data(), bytes_.size());
+}
+
 void dynamic_bitset::clear()
 {
     bit_size_ = 0;
@@ -291,6 +315,16 @@ void dynamic_bitset::clear()
 std::size_t dynamic_bitset::byte_size() const noexcept
 {
     return static_cast<int>(bytes_.size());
+}
+
+unsigned char* dynamic_bitset::data()
+{
+    return bytes_.data();
+}
+
+const unsigned char* dynamic_bitset::data() const
+{
+    return bytes_.data();
 }
 
 dynamic_bitset::dynamic_bitset(std::size_t count, bool value)

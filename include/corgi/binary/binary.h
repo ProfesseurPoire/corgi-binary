@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 namespace corgi::binary
 {
@@ -26,6 +27,19 @@ int bit(int pos, unsigned char* src, int size);
  *
  *          @return     Returns the converted value, as long as count <=64
  */
-long long bits_to_llong(int pos, int count, unsigned char* src, int size);
+long long bits_to_llong(std::size_t    pos,
+                        std::size_t    count,
+                        unsigned char* src,
+                        std::size_t    size);
+
+int bits_to_int(std::size_t    pos,
+                std::size_t    count,
+                unsigned char* src,
+                std::size_t    size);
+
+unsigned long long bits_to_ullong(std::size_t    pos,
+                                  std::size_t    len,
+                                  unsigned char* src,
+                                  std::size_t    size);
 
 }    // namespace corgi::binary

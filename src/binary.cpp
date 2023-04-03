@@ -19,49 +19,53 @@ int bit(int pos, unsigned char* src, int size)
     return src[pos / 8] >> pos % 8 & (1);
 }
 
-long long bits_to_llong(int pos, int count, unsigned char* src, int size)
+template<class T>
+T bits_to_type(std::size_t    pos,
+               std::size_t    len,
+               unsigned char* src,
+               std::size_t    size)
 {
-    if(count >= 64)
-        throw std::invalid_argument("size is >= 64 ");
+    if(len >= sizeof(T) * 8)
+        throw std::invalid_argument("Argument len is greater than sizeof(T)");
 
     if(pos < 0 || pos >= size * 8)
-        throw std::invalid_argument("pos is out of bounds ");
+        throw std::invalid_argument("Argument pos is out of bounds ");
 
-    if(pos + count < 0 || pos + count > size * 8)
-        throw std::invalid_argument("pos is out of bounds ");
+    if(pos + len < 0 || pos + len > size * 8)
+        throw std::invalid_argument("Argument pos is out of bounds ");
 
     // Stores the final result
-    long long result = 0;
+    T result = 0;
 
     // Stores how many bits have been currently read so far
-    int current_bits_done = 0;
+    std::size_t current_bits_done = 0;
 
     // As long as there's some bits to read, the loop goes on
-    while(count != 0)
+    while(len != 0)
     {
         // We get back the byte we're working on and the offset of our first bit
         // inside the byte
-        const int byte_offset        = pos / 8;
-        const int bit_offset_in_byte = pos % 8;
+        const std::size_t byte_offset        = pos / 8;
+        const std::size_t bit_offset_in_byte = pos % 8;
 
         // We count how many bits we read from the current byte
-        int readable_bits = 8 - bit_offset_in_byte;
-        int bits_to_read  = count;
+        std::size_t readable_bits = 8 - bit_offset_in_byte;
+        std::size_t bits_to_read  = len;
 
         // If we have more bits to read than we have on the current byte
-        if(count > readable_bits)
+        if(len > readable_bits)
         {
             // We read what we can
-            count -= readable_bits;
+            len -= readable_bits;
             bits_to_read = readable_bits;
         }
         else
-            count = 0;
+            len = 0;
 
         // We create a binary value that correspond to the number of bit we're
         // reading from the current byte. This variable will be used as a mask
         // to get only the bits we're interested in the current byte
-        long long mask = static_cast<long long>(std::pow(2, bits_to_read) - 1);
+        T mask = static_cast<T>(std::pow(2, bits_to_read) - 1);
 
         // We shift it so it's starts at the right position
         mask <<= bit_offset_in_byte;
@@ -77,5 +81,29 @@ long long bits_to_llong(int pos, int count, unsigned char* src, int size)
         current_bits_done += bits_to_read;
     }
     return result;
+}
+
+int bits_to_int(std::size_t    pos,
+                std::size_t    len,
+                unsigned char* src,
+                std::size_t    size)
+{
+    return bits_to_type<int>(pos, len, src, size);
+}
+
+unsigned long long bits_to_ullong(std::size_t    pos,
+                                  std::size_t    len,
+                                  unsigned char* src,
+                                  std::size_t    size)
+{
+    return bits_to_type<unsigned long long>(pos, len, src, size);
+}
+
+long long bits_to_llong(std::size_t    pos,
+                        std::size_t    count,
+                        unsigned char* src,
+                        std::size_t    size)
+{
+    return bits_to_type<long long>(pos, count, src, size);
 }
 }    // namespace corgi::binary
